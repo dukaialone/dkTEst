@@ -1,0 +1,477 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+<link href="css/main.css" rel="stylesheet" type="text/css" />
+<link href="css/animation.css" rel="stylesheet" type="text/css" />
+<script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
+<!--[if IE 6]>
+<SCRIPT language=JavaScript src="js/DD_belatedPNG_0.0.8a.js" type=text/javascript></SCRIPT>
+<script type="text/javascript">
+	DD_belatedPNG.fix('*');
+</script>
+<![endif]-->
+<title>康迅360</title>
+    <script type="application/javascript">
+        nt = 0;
+        var ntMax = 9;
+        isCanGO = true;
+        function getHeight(nowTime){
+            var result = 0;
+            if(nowTime>0){
+                for(var i = nowTime ; i > -1 ; i --){
+                    result = result + $(".warp"+i).height();
+                }
+            }else{
+                result = result + $(".warp0").height();
+            }
+            return result;
+        }
+        $(function() {
+            var mousewheel = (function () {
+                var types = ['DOMMouseScroll', 'mousewheel'];
+
+                fixedEvent = function (e) {
+                    e.wheel = (e.wheelDelta ? e.wheelDelta : -e.detail) > 0 ? 1 : -1;// 通过事件判断鼠标滚轮反向，1是向上，-1是向下
+                    e.wheelDir = e.wheel > 0 ? 'up' : 'down';    //这个只是描述 e.wheel的值和滚轮方向的关系
+                    return e;
+                };
+
+                return{//返回mousewheel的方法
+                    on: function (el, fn, preventDefault) { //mousewheel对象的on方法， el触发mousewheel事件对象，fn触发后执行函数，preventDefault是否阻止默认行为：滚轮的网页滚动效果
+                        if (typeof preventDefault != 'boolean') { //如果传入的实参preventDefault不是布尔值
+                            preventDefault = true; //初始化为true
+                        }
+
+                        var fixedFn = function (e) { //阻止默认行为函数
+                                    e = fixedEvent(e || window.event); // 兼容写法， 返回的e用来判断滚轮方向
+                                    if (preventDefault) { // 如果需要阻止默认行为
+                                        if (e.preventDefault) {    //firefox
+                                            e.preventDefault();
+                                        }
+                                        else {
+                                            e.returnValue = false; //ie
+                                        }
+                                    }
+                                    ;
+
+                                    fn.call(el, e); //el事件对象调用fn函数，参数为e; 注意fn中使用e.wheel去判断鼠标滚轮事件
+                                },
+                                wheelHash = el.wheelHash; //把包含fixedFn函数的 el.wheelHash属性 赋值给 wheelHash
+
+                        if (!wheelHash) {  //判断函数是否存在 wheelHash 对象
+                            wheelHash = {};
+                            wheelHash[fn] = fixedFn;  //wheelHash对象的属性fn为阻止默认行为函数
+                            el.wheelHash = wheelHash;  //把wheelHash对象赋值给el的wheelHash属性  wheelHash[fn] == el.wheelHash[fn]
+                        } else {
+                            if (wheelHash[fn]) return; //如果存在 wheelHash 且 wheelHash中有 fixedFn 那么返回
+                            wheelHash[fn] = fixedFn;  //如果没有， 就把fixedFn赋值给wheelHash.fn
+                        }
+                        ;
+
+                        if (document.addEventListener) {  //firefox
+                            var i = types.length;
+                            while (i--) {  //循环滚轮事件 数组
+                                el.addEventListener(types[i], fixedFn, false);    //firefox el监听滚轮事件，执行取消默认行为
+                            }
+                        }
+                        else {  //ie
+                            el.attachEvent('onmousewheel', fixedFn);     // ie 监听事件， 处理函数fixedFn
+                        }
+                    },
+                    //mousewheel中的on方法作用: 让元素监听事件，且处理是否执行默认行为。并且保存事件的阻止默认行为函数fixedFn到对象el.wheelHash属性中，
+
+                    un: function (el, fn) {
+                        if (!el.wheelHash) return;  //如果对象不存在wheelHash, 直接跳出(没效果了)；
+                        var wheelHash = el.wheelHash;
+                        if (document.removeEventListener) {  //firefox
+                            var i = types.length;
+                            while (i--) {
+                                el.removeEventListener(types[i], wheelHash[fn], false);  //删除监听事件，执行取消默认行为
+                            }
+                        } else { //ie
+                            el.detachEvent('onmousewheel', wheelHash[fn]);
+                        }
+                        delete wheelHash[fn]; //删除 默认行为函数
+                    }
+                }
+            })();
+            var addAnimate = function(inc){
+                if(inc == 0){
+                    $(".warp"+(inc)).children("div").eq(0).addClass("a-bounceinL");
+                    $(".warp"+(inc)).children("div").eq(1).addClass("a-bounceinR");
+                }else if(inc == 1){
+                    $(".warp"+(inc)).children("div").eq(0).addClass("a-bounceinT");
+                    $(".warp"+(inc)).children("div").eq(1).addClass("a-bounceinB");
+                }else if(inc == 2){
+                    $(".warp"+(inc)).children("div").eq(0).addClass("a-fadeinL");
+                    $(".warp"+(inc)).children("div").eq(1).addClass("a-fadeinR");
+                }else if(inc == 3){
+                    $(".warp"+(inc)).children("div").eq(0).addClass("a-bounceinB");
+                    $(".warp"+(inc)).children("div").eq(1).addClass("a-fadeinL");
+                    $(".warp"+(inc)).children("div").eq(2).addClass("a-fadeinR");
+                }else if(inc == 4){
+                    $(".warp"+(inc)).children("div").eq(0).addClass("a-fadeinR");
+                    $(".warp"+(inc)).children("div").eq(1).addClass("a-fadeinL");
+                }else if(inc == 5){
+                    $(".warp"+(inc)).children("div").eq(0).addClass("a-fadeinR");
+                    $(".warp"+(inc)).children("div").eq(1).addClass("a-fadeinL");
+                }else if(inc == 6){
+                    $(".warp"+(inc)).children("div").eq(0).addClass("a-fadeinR");
+                    $(".warp"+(inc)).children("div").eq(1).addClass("a-bouncein");
+                }else if(inc == 7){
+                    $(".warp"+(inc)).children("div").eq(0).addClass("a-fadeinR");
+                    $(".warp"+(inc)).children("div").eq(1).addClass("a-fadeinL");
+                }else if(inc == 8){
+                    $(".warp"+(inc)).children("div").eq(0).addClass("a-bounceinR");
+                    $(".warp"+(inc)).children("div").eq(1).addClass("a-bouncein");
+                }else if(inc == 9){
+                    $(".warp"+(inc)).children("div").eq(0).addClass("a-rotateinRT");
+                    $(".warp"+(inc)).children("div").eq(1).addClass("a-rotateinLT");
+                }
+            };
+
+            var removeAnimate = function(inc){
+                if(inc == 0){
+                    $(".warp"+(inc)).children("div").eq(0).removeClass("a-bounceinL");
+                    $(".warp"+(inc)).children("div").eq(1).removeClass("a-bounceinR");
+                }else if(inc == 1){
+                    $(".warp"+(inc)).children("div").eq(0).removeClass("a-bounceinT");
+                    $(".warp"+(inc)).children("div").eq(1).removeClass("a-bounceinB");
+                }else if(inc == 2){
+                    $(".warp"+(inc)).children("div").eq(0).removeClass("a-fadeinL");
+                    $(".warp"+(inc)).children("div").eq(1).removeClass("a-fadeinR");
+                }else if(inc == 3){
+                    $(".warp"+(inc)).children("div").eq(0).removeClass("a-bounceinB");
+                    $(".warp"+(inc)).children("div").eq(1).removeClass("a-fadeinL");
+                    $(".warp"+(inc)).children("div").eq(2).removeClass("a-fadeinR");
+                }else if(inc == 4){
+                    $(".warp"+(inc)).children("div").eq(0).removeClass("a-fadeinR");
+                    $(".warp"+(inc)).children("div").eq(1).removeClass("a-fadeinL");
+                }else if(inc == 5){
+                    $(".warp"+(inc)).children("div").eq(0).removeClass("a-fadeinR");
+                    $(".warp"+(inc)).children("div").eq(1).removeClass("a-fadeinL");
+                }else if(inc == 6){
+                    $(".warp"+(inc)).children("div").eq(0).removeClass("a-fadeinR");
+                    $(".warp"+(inc)).children("div").eq(1).removeClass("a-bouncein");
+                }else if(inc == 7){
+                    $(".warp"+(inc)).children("div").eq(0).removeClass("a-fadeinR");
+                    $(".warp"+(inc)).children("div").eq(1).removeClass("a-fadeinL");
+                }else if(inc == 8){
+                    $(".warp"+(inc)).children("div").eq(0).removeClass("a-bounceinR");
+                    $(".warp"+(inc)).children("div").eq(1).removeClass("a-bouncein");
+                }else if(inc == 9){
+                    $(".warp"+(inc)).children("div").eq(0).removeClass("a-rotateinRT");
+                    $(".warp"+(inc)).children("div").eq(1).removeClass("a-rotateinLT");
+                }
+            };
+
+            var myWheel = function (e) {
+                if(e.wheelDir == 'up'){
+                    if(nt > 0 && nt < ntMax+1 && isCanGO){
+                        isCanGO = false;
+                        addAnimate(nt-1);
+                        $("body").find(".wrap:first").animate({
+                            marginTop: (Number($("body").find(".wrap:first").css("marginTop").replace('px', '')) + $(".warp"+(nt-1)).height())+"px"
+                        }, 500,function(){
+                            isCanGO = true;
+                            removeAnimate(nt);
+                            nt = nt - 1;
+                            $(".ico"+nt).parent().find("a").each(function(index,element){
+                                $(element).removeClass("current");
+                            });
+                            $(".ico"+nt).addClass("current");
+                        });
+                    }else{
+                        if(isCanGO){
+                            isCanGO = false;
+                            $("body").find(".wrap:first").animate({
+                                marginTop: "0px"
+                            }, 500,function(){
+                                isCanGO = true;
+                                $(".ico"+nt).parent().find("a").each(function(index,element){
+                                    $(element).removeClass("current");
+                                });
+                                $(".ico"+nt).addClass("current");
+                            });
+                        }
+                    }
+                }else if(e.wheelDir == 'down'){
+                    mousewheel.un(document.getElementById("body1"), null);
+                    if(nt < ntMax && nt > -1 && isCanGO){
+                        isCanGO = false;
+                        addAnimate(nt+1);
+                        $("body").find(".wrap:first").animate({
+                            marginTop: "-"+getHeight(nt)+"px"
+                        }, 500,function(){
+                            isCanGO = true;
+                            removeAnimate(nt);
+                            nt = nt + 1
+                            $(".ico"+nt).parent().find("a").each(function(index,element){
+                                $(element).removeClass("current");
+                            });
+                            $(".ico"+nt).addClass("current");
+                        });
+                    }
+                }
+            };
+            var ua = navigator.userAgent.toLowerCase();
+            if(ua.indexOf("msie") > -1){
+                if(ua.toUpperCase().indexOf("MSIE 6.0") > 0 || ua.toUpperCase().indexOf("MSIE 7.0") > 0 || ua.toUpperCase().indexOf("MSIE 8.0") > 0 || ua.toUpperCase().indexOf("MSIE 9.0") > 0){
+                }else {
+                    mousewheel.on(document.getElementById("body1"), myWheel);
+                }
+            }else{
+                mousewheel.on(document.getElementById("body1"), myWheel);
+            }
+
+            $(".page_ico").find("a").each(function (index,element) {
+                $(element).click(function(){
+                    nt = index;
+                    addAnimate(nt);
+                    var t = 0;
+                    if(index > 0){
+                        t = getHeight(nt-1);
+                    }
+                    $("body").find(".wrap:first").animate({
+                        marginTop: "-"+t+"px"
+                    }, 500,function(){
+                        removeAnimate();
+                        $(".ico"+nt).parent().find("a").each(function(index,element){
+                            $(element).removeClass("current");
+                        });
+                        $(".ico"+nt).addClass("current");
+                    });
+                });
+            });
+
+
+        });
+    </script>
+</head>
+<body id="body1">
+	<!-- 头部开始 -->
+	<div id="header" class="header_wrap">
+    	<div class="header">
+        	<div class="logo fl">
+            	<img src="images/logo.png" alt="康迅360" />
+            </div>
+            <div class="nav fr">
+            	<a href="index.html" class="current">首页</a>
+                <a href="about_us.html">关于我们</a>
+                <a href="user_privacy.html">用户须知</a>
+                <a href="javascript:void(0)" onclick="$('.ico0').trigger('click')" class="xz"><i></i>下载APP</a>
+            </div>
+        </div>
+    </div>
+    <!-- 头部结束 -->
+    
+    <!-- 第一屏开始 -->
+    <div class="one warp0 wrap">
+        <div class="one_left a-bounceinL"></div>
+        <div class="one_right a-bounceinR">
+            <div class="one_right_h"></div>
+            <div class="download">
+                <div class="download_btn">
+                    <a href="http://fir.im/vw8k" class="ios_btn"></a>
+                    <a href="http://www.kangxun365.com/upload/Kangxun360.apk" class="and_btn"></a>
+                </div>
+                <div class="code"></div>
+            </div>
+        </div>
+        <a href="javascript:void(0)" onclick="$('.ico1').trigger('click')" class="down_btn"></a>
+    </div>
+    <!-- 第一屏结束 --
+    
+    <!-- 第二屏开始 -->
+    <div class="two  warp1 wrap">
+    	<div class="two_content">
+        	<h2>
+                <br />
+                <span class="es_font">Smart lifestyle at your hand</span>
+            </h2>
+            <p>健康云及移动智能监测设备</p>
+            <p>无线上传每次测量记录</p>
+            <p>云端永久免费存储</p>
+            <p>私人医生和监护者同步监测结果</p>
+        </div>
+        <div class="two_img"></div>
+    </div>
+    <!-- 第二屏结束 -->
+    
+    <!-- 第三屏开始 -->
+    <div class="three  warp2 wrap">
+    	<div class="three_content">
+        	<h2>
+                管理您的<span class="fc_yellow">家庭成员</span>
+                <br />
+                <span class="es_font">4:2:1 Seven Family Members</span>
+            </h2>
+            <p>用户可以通过建立</p>
+            <p>家庭成员</p>
+            <p>来实现对身在远方的亲人</p>
+            <p>进行健康监测管理</p>
+        </div>
+        <div class="three_img"></div>
+    </div>
+    <!-- 第三屏结束 -->
+    
+    <!-- 第四屏开始 -->
+    <div class="four  warp3 wrap">
+    	<div class="four_content">
+        	<h2>
+                强大的<span class="fc_yellow">日记记录</span>能力
+                <br />
+                <span class="es_font">Record all of the information</span>
+            </h2>
+            <p>移动健康设备无线上传</p>
+            <p>随时随地查看监测数据结果</p>
+            <p>全面记录与之相关内容</p>
+            <p>数据和趋势发展</p>
+            <p>可做为</p>
+            <p>医生临床诊断的参考依据</p>
+        </div>
+        <div class="four_left_img"></div>
+        <div class="four_right_img"></div>
+    </div>
+    <!-- 第四屏结束 -->
+    
+    <!-- 第五屏开始 -->
+    <div class="five  warp4 wrap">
+    	<div class="five_content">
+        	<h2>
+                真实的<span class="fc_yellow">康友手册</span>
+                <br />
+                <span class="es_font">Record all of the information</span>
+            </h2>
+            <p>真实的临床经验的积累</p>
+            <p>真实的康复案例</p>
+            <p>真实的专家改善方案</p>
+            <p>真实的康友自我评述</p>
+            <p>…</p>
+        </div>
+        <div class="five_img"></div>
+    </div>
+    <!-- 第五屏结束 -->
+    
+    <!-- 第六屏开始 -->
+    <div class="six  warp5 wrap">
+    	<div class="six_content">
+        	<h2>
+                什么是<span class="fc_yellow">糖查查</span>
+                <br />
+                <span class="es_font">What is it</span>
+            </h2>
+            <p>这个对血糖与血压有没有影响!!!</p>
+            <p>这个食物好美味</p>
+            <p>这道菜好有食欲</p>
+            <p>到底能不能吃？少吃还是不宜吃？</p>
+            <p>轻松查一查</p>
+            <p>健康自己掌控</p>
+        </div>
+        <div class="six_img"></div>
+    </div>
+    <!-- 第六屏结束 -->
+    
+    <!-- 第七屏开始 -->
+    <div class="seven  warp6 wrap">
+    	<div class="seven_content">
+        	<h2>
+                什么是<span class="fc_yellow">动起来</span>？
+                <br />
+                <span class="es_font">It is a pedomete</span>
+            </h2>
+        <p>它不是一个普通的计步器</p>
+        <p>它可以告诉您</p>
+        <p>运动与血糖/血压波动的关系</p>
+        <p>运动很重要</p>
+        <p>怎么运动才最重要</p>
+        <p>健康是这样<span class="fc_yellow">“炼”</span>成的！</p>
+        </div>
+        <div class="seven_img"></div>
+    </div>
+    <!-- 第七屏结束 -->
+    
+    <!-- 第八屏开始 -->
+    <div class="eight  warp7 wrap">
+    	<div class="eight_content">
+        	<h2>
+                我们的<span class="fc_yellow">康友发现</span>
+                <br />
+                <span class="es_font">Discovery</span>
+            </h2>
+            <p>它代表着最新的医疗资讯</p>
+            <p>它阐述着科学战胜伪科学的理念</p>
+            <p>它告诉您什么才是真实的</p>
+            <p>它不停的探索</p>
+            <p>它一直在发现</p>
+        </div>
+        <div class="eight_img"></div>
+    </div>
+    <!-- 第八屏结束 -->
+    
+    <!-- 第九屏开始 -->
+    <div class="nine  warp8 wrap">
+    	<div class="nine_content">
+        	<h2>
+                <span class="fc_yellow">专家话题</span>应该是这样的
+                <br />
+                <span class="es_font">Expert Topic</span>
+            </h2>
+            <p>您可以看到梦寐以求的名医专家</p>
+            <p>您可以参与他们的话题</p>
+            <p>您可以任意发表感慨或收藏</p>
+            <p>我们可以用图文/视频/音频等方式展现</p>
+            <p>当然</p>
+            <p>您也可以分享这些话题到您的朋友圈</p>
+            <p>所有的话题和精彩评述</p>
+            <p>都是医疗机构无法给予您的！</p>
+        </div>
+        <div class="nine_img"></div>
+    </div>
+    <!-- 第九屏结束 -->
+    
+    <!-- 第十屏开始 -->
+    <div class="ten  warp9 wrap">
+    	<div class="ten_content">
+        	<h2>
+                <span class="fc_yellow">名医专家</span>的专家咨询
+                <br />
+                <span class="es_font">See the doctor</span>
+            </h2>
+            <p>任何问题可以直接找医生</p>
+            <p>您可以通过图文或语音方式与医生互动</p>
+            <p>我们有100名专业医生为您线上服务</p>
+            <p>我们有50个名医专家组提供医学保障</p>
+            <p>北京近20家三甲医院与我们合作</p>
+            <p>您还担心什么？</p>
+        </div>
+        <div class="ten_img"></div>
+    </div>
+    <!-- 第十屏结束 -->
+    
+    <!-- 底部开始 -->
+    <div class="wrap">
+        <div class="footer">
+            <p><a href="http://www.jiuhaohealth.com" target="_blank" title="9号康迅">中国9号健康（HK00419）</a>|<a href="mailto:support@jiuhaohealth.com" title="9号康迅">服务投诉与建议&nbsp;support@jiuhaohealth.com</a>|<a href="mailto:ir@jiuhaohealth.com" title="9号康迅">中国投资者与媒体查询&nbsp;ir@jiuhaohealth.com</a></p>
+            <p>Copyright &copy; 2012 9 Health Management Limited,All Rights Reserved .  京ICP备13052870号-2 京公网安备11010502025365</p>
+        </div>
+    </div>
+	<!-- 底部结束 -->
+    
+    <div class="page_ico">
+        <a href="#" class="current ico0"></a>
+        <a href="#" class="ico1"></a>
+        <a href="#" class="ico2"></a>
+        <a href="#" class="ico3"></a>
+        <a href="#" class="ico4"></a>
+        <a href="#" class="ico5"></a>
+        <a href="#" class="ico6"></a>
+        <a href="#" class="ico7"></a>
+        <a href="#" class="ico8"></a>
+        <a href="#" class="ico9"></a>
+    </div>
+    
+</body>
+</html>
